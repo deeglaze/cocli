@@ -74,6 +74,10 @@ func display(signedCorimFile string, showTags bool) error {
 		return fmt.Errorf("error loading signed CoRIM from %s: %w", signedCorimFile, err)
 	}
 
+	// If a tagged-corim-type-choice #6.500 of tagged-signed-corim #6.502, strip the prefix.
+	corimTypeChoice := []byte("\xd9\x01\xf4\xd9\x01\xf6")
+	signedCorimCBOR, _ = bytes.CutPrefix(signedCorimCBOR, corimTypeChoice)
+
 	if err = s.FromCOSE(signedCorimCBOR); err != nil {
 		return fmt.Errorf("error decoding signed CoRIM from %s: %w", signedCorimFile, err)
 	}
